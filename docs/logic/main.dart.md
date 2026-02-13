@@ -20,64 +20,67 @@ main.dart에서 **앱 초기화**와 **Provider 설정**을 담당합니다.
 ## ✅ 실제 구현 구조
 
 ```dart
-import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 
-import 'firebase_options.dart';
-import 'core/services/fcm_service.dart';
-import 'core/services/network_service.dart';
+import 'core/services/local_notification_service.dart';
 import 'core/route/router.dart';
 import 'core/di/core_providers.dart';
 import 'core/di/data_providers.dart';
 import 'core/di/domain_providers.dart';
 import 'core/di/viewmodel_providers.dart';
-import 'data/datasource/notification/budget_notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // 1. Firebase 초기화
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp();
 
-  // 2. Google Mobile Ads 초기화
-  await MobileAds.instance.initialize();
-
-  // 3. Kakao SDK 초기화
-  KakaoSdk.init(nativeAppKey: 'your-native-app-key');
-
-  // 4. 날짜 포맷 초기화 (한국어)
+  // 2. 날짜 포맷 초기화 (한국어)
   await initializeDateFormatting('ko_KR', null);
 
-  // 5. 네트워크 모니터링 시작
-  NetworkService().startNetworkMonitoring();
+  // 3. 로컬 알림 초기화
+  final localNotificationService = LocalNotificationService();
+  await localNotificationService.initialize();
 
-  // 6. FCM 초기화 (플랫폼별 분기)
-  if (Platform.isIOS) {
-    // iOS는 안전 모드로 비동기 초기화
-    Future.microtask(() async {
-      await FCMServiceIOSSafe().initializeIOSSafe();
-    });
-  } else {
-    // Android는 동기 초기화
-    await FCMService().initialize();
-  }
+  // 4. 로그인된 사용자가 있으면 알림 재스케줄링 (재부팅 대응)
+  _rescheduleNotifications(localNotificationService);
 
-  // 7. 로컬 알림 초기화
-  await BudgetNotificationService.initializeLocalNotifications();
-
-  runApp(const MyApp());
+  runApp(const CheckAlertApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+/// 앱 시작 시 알림 재스케줄링 (비동기로 백그라운드 실행)
+Future<void> _rescheduleNotifications(
+    LocalNotificationService notificationService) async {
+  try {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final snapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .collection('tasks')
+        .get();
+
+    // Firestore → TaskModel 변환 후 전체 재스케줄링
+    final tasks = snapshot.docs
+        .map((doc) => TaskFirebaseDataSourceImpl.documentToTaskDto(doc).toModel())
+        .whereType<TaskModel>()
+        .toList();
+
+    await notificationService.rescheduleAll(tasks);
+  } catch (e) {
+    debugPrint('알림 재스케줄링 실패: $e');
+  }
+}
+
+class CheckAlertApp extends StatelessWidget {
+  const CheckAlertApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -89,8 +92,8 @@ class MyApp extends StatelessWidget {
         ...buildViewModelProviders(),
       ],
       child: MaterialApp.router(
-        title: '[AppName]',
-        theme: ThemeData.light(),
+        title: '체크 알리미',
+        theme: ThemeData(/* Material 3 테마 설정 */),
         routerConfig: router,
         debugShowCheckedModeBanner: false,
         // 한국어 지역화 설정

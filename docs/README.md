@@ -12,6 +12,8 @@
 | **Backend** | Firebase Auth + Firestore | Authentication and real-time database |
 | **Navigation** | GoRouter | Declarative routing with type safety |
 | **Error Handling** | Result<T> Pattern | Type-safe error handling |
+| **Notifications** | flutter_local_notifications | 로컬 알림 (FCM 미사용) |
+| **UI Components** | flutter_slidable, table_calendar | 스와이프 액션, 달력 뷰 |
 | **Data Flow** | Firebase → Repository → UseCase → ViewModel(State) → View | Clean data flow |
 
 ## 🚀 Quick Start
@@ -65,7 +67,6 @@ docs/
 │   ├── apple_login/                   # 🍎 Apple Sign-In setup
 │   ├── google_login/                  # 🔵 Google Sign-In setup
 │   ├── kakao_login/                   # 🟡 Kakao Sign-In setup
-│   └── fcm/                           # 📬 Firebase Cloud Messaging
 │
 └── 📚 README.md                       # This documentation guide
 ```
@@ -145,7 +146,6 @@ graph TD
 | **[apple_login/](firebase/apple_login/)** | Apple Sign-In guide | Adding Apple authentication |
 | **[google_login/](firebase/google_login/)** | Google Sign-In guide | Adding Google authentication |
 | **[kakao_login/](firebase/kakao_login/)** | Kakao Sign-In guide | Adding Kakao authentication |
-| **[fcm/](firebase/fcm/)** | Push notifications | Implementing FCM |
 
 ## 🎯 Key Design Patterns
 - **🏗️ Clean Architecture** - Clear separation of concerns

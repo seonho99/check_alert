@@ -1,0 +1,28 @@
+import '../../../core/errors/failure.dart';
+import '../../../core/result/result.dart';
+import '../../model/task_model.dart';
+import '../../repository/task_repository.dart';
+
+class AddTaskUseCase {
+  final TaskRepository _repository;
+
+  AddTaskUseCase({required TaskRepository repository})
+      : _repository = repository;
+
+  Future<Result<String>> call({
+    required String userId,
+    required TaskModel task,
+  }) async {
+    if (task.name.trim().isEmpty) {
+      return const Error(ValidationFailure('항목 이름을 입력해주세요'));
+    }
+    if (task.name.trim().length > 30) {
+      return const Error(ValidationFailure('항목 이름은 30자 이하로 입력해주세요'));
+    }
+    if (task.repeatDays.isEmpty) {
+      return const Error(ValidationFailure('반복 요일을 선택해주세요'));
+    }
+
+    return await _repository.addTask(userId, task);
+  }
+}
