@@ -21,6 +21,7 @@ import '../../ui/task_list/task_list_view.dart';
 import '../../ui/task_list/task_list_viewmodel.dart';
 import '../../ui/task_detail/task_detail_view.dart';
 import '../../ui/task_detail/task_detail_viewmodel.dart';
+import '../../ui/settings/legal_view.dart';
 import '../../ui/settings/settings_view.dart';
 
 /// 라우트 경로 상수
@@ -33,6 +34,8 @@ class AppRoutes {
   static const String taskDetail = '/tasks/detail';
   static const String taskAdd = '/tasks/add';
   static const String settings = '/settings';
+  static const String legalPrivacy = '/settings/privacy';
+  static const String legalTerms = '/settings/terms';
 }
 
 /// GoRouter 설정
@@ -105,6 +108,14 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: AppRoutes.settings,
       builder: (context, state) => const SettingsView(),
+    ),
+    GoRoute(
+      path: AppRoutes.legalPrivacy,
+      builder: (context, state) => const LegalView(type: LegalType.privacy),
+    ),
+    GoRoute(
+      path: AppRoutes.legalTerms,
+      builder: (context, state) => const LegalView(type: LegalType.terms),
     ),
   ],
 );

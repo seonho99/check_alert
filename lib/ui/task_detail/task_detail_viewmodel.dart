@@ -188,25 +188,37 @@ class TaskDetailViewModel extends ChangeNotifier {
       repeatMonthDays: _state.repeatMonthDays,
     );
 
-    final result = _state.isEditMode
-        ? await _updateTaskUseCase(userId: userId, task: task)
-        : await _addTaskUseCase(userId: userId, task: task);
-
-    result.when(
-      success: (_) {
-        if (_state.isEditMode) {
-          _notificationService.cancelTaskReminder(task.id);
-        }
-        _notificationService.scheduleTaskReminder(task);
-        _updateState(_state.copyWith(isLoading: false, isSaveSuccess: true));
-      },
-      error: (failure) {
-        _updateState(_state.copyWith(
-          isLoading: false,
-          errorMessage: failure.message,
-        ));
-      },
-    );
+    if (_state.isEditMode) {
+      final result = await _updateTaskUseCase(userId: userId, task: task);
+      result.when(
+        success: (_) async {
+          await _notificationService.cancelTaskReminder(task.id);
+          await _notificationService.scheduleTaskReminder(task);
+          _updateState(_state.copyWith(isLoading: false, isSaveSuccess: true));
+        },
+        error: (failure) {
+          _updateState(_state.copyWith(
+            isLoading: false,
+            errorMessage: failure.message,
+          ));
+        },
+      );
+    } else {
+      final result = await _addTaskUseCase(userId: userId, task: task);
+      result.when(
+        success: (taskId) async {
+          final savedTask = task.copyWith(id: taskId);
+          await _notificationService.scheduleTaskReminder(savedTask);
+          _updateState(_state.copyWith(isLoading: false, isSaveSuccess: true));
+        },
+        error: (failure) {
+          _updateState(_state.copyWith(
+            isLoading: false,
+            errorMessage: failure.message,
+          ));
+        },
+      );
+    }
   }
 
   @override

@@ -102,7 +102,7 @@ class TaskDetailView extends StatelessWidget {
                         // 항목 이름
                         _buildSection(
                           children: [
-                            _buildSectionLabel('항목 이름'),
+                            _buildSectionLabel('알림 메세지'),
                             const SizedBox(height: 10),
                             TextFormField(
                               controller: viewModel.nameController,
@@ -548,6 +548,7 @@ class TaskDetailView extends StatelessWidget {
       onTap: () async {
         final time = await showTimePicker(
           context: context,
+          initialEntryMode: TimePickerEntryMode.inputOnly,
           initialTime: TimeOfDay(
               hour: state.reminderHour, minute: state.reminderMinute),
         );

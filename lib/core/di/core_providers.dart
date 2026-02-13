@@ -6,7 +6,9 @@ import 'package:provider/single_child_widget.dart';
 import '../services/local_notification_service.dart';
 
 /// Core Provider (Firebase 인스턴스, 서비스)
-List<SingleChildWidget> buildCoreProviders() {
+List<SingleChildWidget> buildCoreProviders({
+  required LocalNotificationService localNotificationService,
+}) {
   return [
     Provider<FirebaseFirestore>(
       create: (_) => FirebaseFirestore.instance,
@@ -14,8 +16,8 @@ List<SingleChildWidget> buildCoreProviders() {
     Provider<FirebaseAuth>(
       create: (_) => FirebaseAuth.instance,
     ),
-    Provider<LocalNotificationService>(
-      create: (_) => LocalNotificationService(),
+    Provider<LocalNotificationService>.value(
+      value: localNotificationService,
     ),
   ];
 }

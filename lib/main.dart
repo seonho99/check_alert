@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -7,9 +5,9 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 
 import 'core/services/local_notification_service.dart';
-import 'data/datasource/task_firebase_datasource_impl.dart';
-import 'data/mapper/task_model_mapper.dart';
-import 'domain/model/task_model.dart';
+import 'firebase_options.dart';
+import 'domain/repository/auth_repository.dart';
+import 'domain/usecase/task/get_tasks_usecase.dart';
 
 import 'core/theme/app_colors.dart';
 import 'core/theme/app_text_styles.dart';
@@ -23,7 +21,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // 1. Firebase 초기화
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   // 2. 날짜 포맷 초기화 (한국어)
   await initializeDateFormatting('ko_KR', null);
@@ -31,51 +31,27 @@ void main() async {
   // 3. 로컬 알림 초기화
   final localNotificationService = LocalNotificationService();
   await localNotificationService.initialize();
+  await localNotificationService.requestPermission();
 
-  // 4. 로그인된 사용자가 있으면 알림 재스케줄링 (재부팅 대응)
-  _rescheduleNotifications(localNotificationService);
-
-  runApp(const CheckAlertApp());
-}
-
-/// 앱 시작 시 알림 재스케줄링 (비동기로 백그라운드 실행)
-Future<void> _rescheduleNotifications(
-    LocalNotificationService notificationService) async {
-  try {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return;
-
-    final snapshot = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .collection('tasks')
-        .get();
-
-    final tasks = snapshot.docs
-        .map((doc) => TaskFirebaseDataSourceImpl.documentToTaskDto(doc).toModel())
-        .whereType<TaskModel>()
-        .toList();
-
-    await notificationService.rescheduleAll(tasks);
-    debugPrint('알림 재스케줄링 완료: ${tasks.length}개 태스크');
-  } catch (e) {
-    debugPrint('알림 재스케줄링 실패: $e');
-  }
+  runApp(CheckAlertApp(localNotificationService: localNotificationService));
 }
 
 class CheckAlertApp extends StatelessWidget {
-  const CheckAlertApp({super.key});
+  final LocalNotificationService localNotificationService;
+
+  const CheckAlertApp({super.key, required this.localNotificationService});
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ...buildCoreProviders(),
+        ...buildCoreProviders(localNotificationService: localNotificationService),
         ...buildDataProviders(),
         ...buildDomainProviders(),
         ...buildViewModelProviders(),
       ],
-      child: MaterialApp.router(
+      child: _AppInitializer(
+        child: MaterialApp.router(
         title: '체크 알리미',
         theme: ThemeData(
           useMaterial3: true,
@@ -245,6 +221,54 @@ class CheckAlertApp extends StatelessWidget {
         ],
         locale: const Locale('ko', 'KR'),
       ),
+      ),
     );
   }
+}
+
+/// 앱 시작 시 알림 재스케줄링을 Provider tree 내에서 실행
+class _AppInitializer extends StatefulWidget {
+  final Widget child;
+
+  const _AppInitializer({required this.child});
+
+  @override
+  State<_AppInitializer> createState() => _AppInitializerState();
+}
+
+class _AppInitializerState extends State<_AppInitializer> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _rescheduleNotifications();
+    });
+  }
+
+  Future<void> _rescheduleNotifications() async {
+    try {
+      final authRepo = context.read<AuthRepository>();
+      final userId = authRepo.currentUserId;
+      if (userId == null) return;
+
+      final getTasksUseCase = context.read<GetTasksUseCase>();
+      final notificationService = context.read<LocalNotificationService>();
+
+      final result = await getTasksUseCase(userId);
+      result.when(
+        success: (tasks) async {
+          await notificationService.rescheduleAll(tasks);
+          debugPrint('알림 재스케줄링 완료: ${tasks.length}개 태스크');
+        },
+        error: (failure) {
+          debugPrint('알림 재스케줄링 실패: ${failure.message}');
+        },
+      );
+    } catch (e) {
+      debugPrint('알림 재스케줄링 실패: $e');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }
