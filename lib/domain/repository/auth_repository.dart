@@ -39,4 +39,7 @@ abstract class AuthRepository {
 
   /// 현재 사용자 UID
   String? get currentUserId;
+
+  /// 회원 탈퇴
+  Future<Result<void>> deleteAccount();
 }

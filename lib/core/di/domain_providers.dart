@@ -11,6 +11,7 @@ import '../../domain/usecase/auth/apple_sign_in_usecase.dart';
 import '../../domain/usecase/auth/google_sign_in_usecase.dart';
 import '../../domain/usecase/auth/sign_in_usecase.dart';
 import '../../domain/usecase/auth/sign_up_usecase.dart';
+import '../../domain/usecase/auth/delete_account_usecase.dart';
 import '../../domain/usecase/auth/sign_out_usecase.dart';
 import '../../domain/usecase/task/get_tasks_usecase.dart';
 import '../../domain/usecase/task/add_task_usecase.dart';
@@ -55,6 +56,11 @@ List<SingleChildWidget> buildDomainProviders() {
     ),
     Provider(
       create: (context) => SignOutUseCase(
+        repository: context.read<AuthRepository>(),
+      ),
+    ),
+    Provider(
+      create: (context) => DeleteAccountUseCase(
         repository: context.read<AuthRepository>(),
       ),
     ),

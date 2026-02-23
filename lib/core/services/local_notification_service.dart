@@ -99,7 +99,7 @@ class LocalNotificationService {
       await _plugin.zonedSchedule(
         notificationId,
         '체크 알리미',
-        '${task.name} 체크할 시간이에요!',
+        '${task.name} 을 할 시간이예요!',
         _nextInstanceOfDayAndTime(day, task.reminderHour, task.reminderMinute),
         NotificationDetails(
           android: AndroidNotificationDetails(
@@ -108,7 +108,7 @@ class LocalNotificationService {
             channelDescription: '체크 항목 알림',
             importance: Importance.high,
             priority: Priority.high,
-            color: const Color(0xFF0D9488),
+            color: const Color(0xFFF97316),
           ),
           iOS: const DarwinNotificationDetails(
             presentAlert: true,
@@ -134,7 +134,7 @@ class LocalNotificationService {
       await _plugin.zonedSchedule(
         notificationId,
         '체크 알리미',
-        '${task.name} 체크할 시간이에요!',
+        '${task.name} 을 할 시간이예요!',
         scheduledDate,
         NotificationDetails(
           android: AndroidNotificationDetails(
@@ -143,7 +143,7 @@ class LocalNotificationService {
             channelDescription: '체크 항목 알림',
             importance: Importance.high,
             priority: Priority.high,
-            color: const Color(0xFF0D9488),
+            color: const Color(0xFFF97316),
           ),
           iOS: const DarwinNotificationDetails(
             presentAlert: true,
@@ -181,7 +181,7 @@ class LocalNotificationService {
       await _plugin.zonedSchedule(
         notificationId,
         '체크 알리미',
-        '${task.name} 체크할 시간이에요!',
+        '${task.name} 을 할 시간이예요!',
         scheduledDate,
         NotificationDetails(
           android: AndroidNotificationDetails(
@@ -190,7 +190,7 @@ class LocalNotificationService {
             channelDescription: '체크 항목 알림',
             importance: Importance.high,
             priority: Priority.high,
-            color: const Color(0xFF0D9488),
+            color: const Color(0xFFF97316),
           ),
           iOS: const DarwinNotificationDetails(
             presentAlert: true,
@@ -309,7 +309,7 @@ class LocalNotificationService {
     await _plugin.zonedSchedule(
       notificationId,
       '체크 알리미',
-      '${task.name} 체크할 시간이에요!',
+      '${task.name} 을 할 시간이예요!',
       scheduledDate,
       NotificationDetails(
         android: AndroidNotificationDetails(
@@ -318,7 +318,7 @@ class LocalNotificationService {
           channelDescription: '체크 항목 알림',
           importance: Importance.high,
           priority: Priority.high,
-          color: const Color(0xFF0D9488),
+          color: const Color(0xFFF97316),
         ),
         iOS: const DarwinNotificationDetails(
           presentAlert: true,

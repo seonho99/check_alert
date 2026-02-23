@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
+import '../../core/route/router.dart';
+import '../../core/services/local_notification_service.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
+import '../../domain/usecase/auth/delete_account_usecase.dart';
 
 enum LegalType { privacy, terms }
 
@@ -90,7 +95,146 @@ class LegalView extends StatelessWidget {
         '• Firebase 보안 규칙을 통한 접근 제어',
       ]),
       const SizedBox(height: 16),
+      Builder(
+        builder: (context) => Align(
+          alignment: Alignment.center,
+          child: TextButton(
+            onPressed: () => _showDeleteAccountDialog(context),
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+              minimumSize: Size.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            child: Text(
+              '회원 탈퇴',
+              style: TextStyle(
+                fontSize: 11,
+                color: Colors.grey.shade500,
+                decoration: TextDecoration.underline,
+                decorationColor: Colors.grey.shade500,
+              ),
+            ),
+          ),
+        ),
+      ),
+      const SizedBox(height: 16),
     ];
+  }
+
+  void _showDeleteAccountDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        contentPadding: const EdgeInsets.fromLTRB(24, 28, 24, 24),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                color: AppColors.error.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.warning_amber_rounded,
+                color: AppColors.error,
+                size: 28,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text('회원 탈퇴', style: AppTextStyles.subtitle1Bold),
+            const SizedBox(height: 8),
+            Text(
+              '탈퇴 시 모든 데이터가 삭제되며\n복구할 수 없습니다.\n정말 탈퇴하시겠습니까?',
+              style: AppTextStyles.body2Regular.copyWith(
+                color: AppColors.subtleText,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.pop(dialogContext),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      side: const BorderSide(color: AppColors.divider),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      '취소',
+                      style: AppTextStyles.body2Medium.copyWith(
+                        color: AppColors.subtleText,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      Navigator.pop(dialogContext);
+                      await _executeDeleteAccount(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.error,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      '탈퇴',
+                      style: AppTextStyles.body2Medium.copyWith(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _executeDeleteAccount(BuildContext context) async {
+    final notificationService = context.read<LocalNotificationService>();
+    final deleteAccountUseCase = context.read<DeleteAccountUseCase>();
+
+    // 1. 로컬 알림 전부 취소
+    await notificationService.cancelAllReminders();
+
+    // 2~4. Firestore 데이터 삭제 + Firebase Auth 계정 삭제
+    final result = await deleteAccountUseCase();
+
+    if (!context.mounted) return;
+
+    result.when(
+      success: (_) {
+        context.go(AppRoutes.signIn);
+      },
+      error: (failure) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(failure.message),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   // ──────────────────────────────────────

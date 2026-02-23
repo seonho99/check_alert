@@ -40,4 +40,7 @@ abstract class AuthDataSource {
 
   /// 인증 상태 변화 스트림 (UID or null)
   Stream<String?> get authStateChanges;
+
+  /// 회원 탈퇴 (Firestore 데이터 + Firebase Auth 계정 삭제)
+  Future<void> deleteAccount();
 }

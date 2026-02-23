@@ -4,23 +4,23 @@ import 'package:flutter/material.dart';
 abstract class AppColors {
   AppColors._(); // 인스턴스화 방지를 위한 private 생성자
 
-  // ====== 앱 기본 색상 (Teal Blue) ======
+  // ====== 앱 기본 색상 (Orange / Pink) ======
 
-  // Primary — 틸 블루 계열
-  static const Color primary = Color(0xFF0D9488);       // Teal 600
-  static const Color primaryDark = Color(0xFF115E59);    // Teal 800
-  static const Color primaryLight = Color(0xFFCCFBF1);   // Teal 50
+  // Primary — 오렌지 계열 (앱 아이콘 기반)
+  static const Color primary = Color(0xFFF97316);       // Orange 500
+  static const Color primaryDark = Color(0xFFC2410C);    // Orange 700
+  static const Color primaryLight = Color(0xFFFFF7ED);   // Orange 50
 
-  // Secondary
-  static const Color secondary = Color(0xFF0EA5E9);     // Sky 500
+  // Secondary — 핑크 계열 (앱 아이콘 그라데이션)
+  static const Color secondary = Color(0xFFEC4899);     // Pink 500
 
   // Accent
-  static const Color accent = Color(0xFFF59E0B);        // Amber 500
+  static const Color accent = Color(0xFFFB923C);        // Orange 400
 
-  // Background & Surface (iOS Grouped Style)
-  static const Color background = Color(0xFFF2F2F7);    // iOS systemGroupedBackground
+  // Background & Surface
+  static const Color background = Color(0xFFFAF6F1);    // 연한 베이지 (Scaffold 배경)
   static const Color surface = Color(0xFFFFFFFF);       // 흰색 (카드/AppBar/BottomNav)
-  static const Color surfaceDim = Color(0xFFF2F2F7);    // 카드 내부 인풋/버튼 (배경과 동일 그레이)
+  static const Color surfaceDim = Color(0xFFFAF6F1);    // 카드 내부 인풋/버튼 (연한 베이지)
 
   // Text
   static const Color onSurface = Color(0xFF1C1917);     // Stone 900
@@ -37,10 +37,10 @@ abstract class AppColors {
   // ====== 히트맵 (캘린더 달성률) ======
 
   static const Color heatmap0 = Color(0xFFE7E5E4);   // 0%  — Stone 200
-  static const Color heatmap1 = Color(0xFFCCFBF1);   // 1-33%  — Teal 50
-  static const Color heatmap2 = Color(0xFF5EEAD4);   // 34-66% — Teal 300
-  static const Color heatmap3 = Color(0xFF14B8A6);   // 67-99% — Teal 500
-  static const Color heatmap4 = Color(0xFF0F766E);   // 100%   — Teal 700
+  static const Color heatmap1 = Color(0xFFFFF7ED);   // 1-33%  — Orange 50
+  static const Color heatmap2 = Color(0xFFFDBA74);   // 34-66% — Orange 300
+  static const Color heatmap3 = Color(0xFFF97316);   // 67-99% — Orange 500
+  static const Color heatmap4 = Color(0xFFC2410C);   // 100%   — Orange 700
 
   /// 달성률에 따른 히트맵 색상 반환
   static Color heatmapColor(double rate) {
@@ -64,7 +64,7 @@ abstract class AppColors {
     Color(0xFFEC4899), // 7월 - 핑크
     Color(0xFF8B5CF6), // 8월 - 바이올렛
     Color(0xFF3B82F6), // 9월 - 블루
-    Color(0xFF14B8A6), // 10월 - 틸
+    Color(0xFFF97316), // 10월 - 오렌지
     Color(0xFFF97316), // 11월 - 오렌지
     Color(0xFF6366F1), // 12월 - 인디고
   ];

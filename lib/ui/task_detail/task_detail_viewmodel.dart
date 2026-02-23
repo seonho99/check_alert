@@ -190,7 +190,7 @@ class TaskDetailViewModel extends ChangeNotifier {
 
     if (_state.isEditMode) {
       final result = await _updateTaskUseCase(userId: userId, task: task);
-      result.when(
+      await result.when(
         success: (_) async {
           await _notificationService.cancelTaskReminder(task.id);
           await _notificationService.scheduleTaskReminder(task);
@@ -205,7 +205,7 @@ class TaskDetailViewModel extends ChangeNotifier {
       );
     } else {
       final result = await _addTaskUseCase(userId: userId, task: task);
-      result.when(
+      await result.when(
         success: (taskId) async {
           final savedTask = task.copyWith(id: taskId);
           await _notificationService.scheduleTaskReminder(savedTask);

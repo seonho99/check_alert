@@ -238,7 +238,7 @@ class TaskDetailView extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             decoration: BoxDecoration(
               color: isSelected
-                  ? AppColors.primary.withValues(alpha: 0.08)
+                  ? AppColors.primary
                   : AppColors.surface,
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
@@ -250,7 +250,8 @@ class TaskDetailView extends StatelessWidget {
             child: Text(
               category,
               style: AppTextStyles.body2Medium.copyWith(
-                color: isSelected ? AppColors.primary : AppColors.onSurface,
+                color: isSelected ? Colors.white : AppColors.onSurface,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
               ),
             ),
           ),
@@ -286,25 +287,17 @@ class TaskDetailView extends StatelessWidget {
                 duration: const Duration(milliseconds: 200),
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 decoration: BoxDecoration(
-                  color: isSelected ? AppColors.surface : Colors.transparent,
+                  color: isSelected ? AppColors.primary : Colors.transparent,
                   borderRadius: BorderRadius.circular(10),
-                  boxShadow: isSelected
-                      ? [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.06),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ]
-                      : null,
                 ),
                 child: Center(
                   child: Text(
                     label,
                     style: AppTextStyles.body2Medium.copyWith(
                       color: isSelected
-                          ? AppColors.primary
+                          ? Colors.white
                           : AppColors.subtleText,
+                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                     ),
                   ),
                 ),

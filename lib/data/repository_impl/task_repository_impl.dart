@@ -1,6 +1,7 @@
 import '../../core/errors/failure.dart';
 import '../../core/errors/failure_mapper.dart';
 import '../../core/result/result.dart';
+import '../../domain/model/repeat_type.dart';
 import '../../domain/model/task_model.dart';
 import '../../domain/repository/task_repository.dart';
 import '../datasource/task_datasource.dart';
@@ -49,8 +50,19 @@ class TaskRepositoryImpl implements TaskRepository {
       if (task.name.trim().isEmpty) {
         return const Error(ValidationFailure('항목 이름은 필수입니다'));
       }
-      if (task.repeatDays.isEmpty) {
-        return const Error(ValidationFailure('반복 요일을 선택해주세요'));
+      switch (task.repeatType) {
+        case RepeatType.weekly:
+          if (task.repeatDays.isEmpty) {
+            return const Error(ValidationFailure('반복 요일을 선택해주세요'));
+          }
+        case RepeatType.monthly:
+          if (task.repeatMonthDays.isEmpty) {
+            return const Error(ValidationFailure('반복 일자를 선택해주세요'));
+          }
+        case RepeatType.once:
+          if (task.specificDates.isEmpty) {
+            return const Error(ValidationFailure('날짜를 선택해주세요'));
+          }
       }
 
       final dto = task.toDto();

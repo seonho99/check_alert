@@ -125,6 +125,7 @@ class AuthFirebaseDataSourceImpl implements AuthDataSource {
   Future<void> _initializeGoogleSignIn() async {
     try {
       await _googleSignIn.initialize(
+        clientId: '92105577038-e2qh282rkc87ll94et30349jf7agi9je.apps.googleusercontent.com',
         serverClientId: '92105577038-slpl4jp7t6chqjg9gq9e4gd6fqg9l7re.apps.googleusercontent.com',
       );
       _isGoogleSignInInitialized = true;
@@ -244,6 +245,42 @@ class AuthFirebaseDataSourceImpl implements AuthDataSource {
       final doc = await _firestore.collection('users').doc(uid).get();
       if (!doc.exists) return null;
       return _documentToDto(doc);
+    } on FirebaseException catch (e) {
+      throw ServerException('Firebase 오류: ${e.message}');
+    }
+  }
+
+  // ========================================
+  // 회원 탈퇴
+  // ========================================
+
+  @override
+  Future<void> deleteAccount() async {
+    try {
+      final user = _auth.currentUser;
+      if (user == null) {
+        throw const UnauthorizedException('로그인이 필요합니다');
+      }
+
+      final uid = user.uid;
+
+      // 1. Firestore users/{uid}/tasks 서브컬렉션 문서 전부 삭제
+      final tasksSnapshot =
+          await _firestore.collection('users').doc(uid).collection('tasks').get();
+      for (final doc in tasksSnapshot.docs) {
+        await doc.reference.delete();
+      }
+
+      // 2. Firestore users/{uid} 문서 삭제
+      await _firestore.collection('users').doc(uid).delete();
+
+      // 3. Firebase Auth 계정 삭제
+      await user.delete();
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'requires-recent-login') {
+        throw const ServerException('보안을 위해 재로그인 후 다시 시도해주세요');
+      }
+      rethrow;
     } on FirebaseException catch (e) {
       throw ServerException('Firebase 오류: ${e.message}');
     }

@@ -233,4 +233,15 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   String? get currentUserId => _dataSource.currentUserId;
+
+  @override
+  Future<Result<void>> deleteAccount() async {
+    try {
+      await _dataSource.deleteAccount();
+      return const Success(null);
+    } catch (e, stackTrace) {
+      final failure = FailureMapper.mapExceptionToFailure(e, stackTrace);
+      return Error(failure);
+    }
+  }
 }

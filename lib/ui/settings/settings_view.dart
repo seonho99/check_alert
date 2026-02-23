@@ -60,30 +60,6 @@ class SettingsView extends StatelessWidget {
 
           const SizedBox(height: 24),
 
-          // 계정 섹션
-          _buildSectionLabel('계정'),
-          const SizedBox(height: 8),
-          _buildCard(
-            children: [
-              _buildTile(
-                icon: Icons.person_outline,
-                iconColor: AppColors.primary,
-                title: '계정 정보',
-                subtitle: userId,
-              ),
-              const Divider(height: 1, indent: 56),
-              _buildTile(
-                icon: Icons.logout_outlined,
-                iconColor: AppColors.error,
-                title: '로그아웃',
-                titleColor: AppColors.error,
-                onTap: () => _showLogoutDialog(context),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 24),
-
           // 앱 정보 섹션
           _buildSectionLabel('앱 정보'),
           const SizedBox(height: 8),
@@ -116,17 +92,41 @@ class SettingsView extends StatelessWidget {
                 trailing: const Icon(Icons.chevron_right, color: AppColors.subtleText, size: 20),
                 onTap: () => context.push(AppRoutes.legalTerms),
               ),
+              // const Divider(height: 1, indent: 56),
+              // _buildTile(
+              //   icon: Icons.code_outlined,
+              //   iconColor: AppColors.subtleText,
+              //   title: '오픈소스 라이선스',
+              //   trailing: const Icon(Icons.chevron_right, color: AppColors.subtleText, size: 20),
+              //   onTap: () => showLicensePage(
+              //     context: context,
+              //     applicationName: '체크 알리미',
+              //     applicationVersion: '1.0.0',
+              //   ),
+              // ),
+            ],
+          ),
+
+          const SizedBox(height: 24),
+
+          // 계정 섹션
+          _buildSectionLabel('계정'),
+          const SizedBox(height: 8),
+          _buildCard(
+            children: [
+              _buildTile(
+                icon: Icons.person_outline,
+                iconColor: AppColors.primary,
+                title: '계정 정보',
+                subtitle: userId,
+              ),
               const Divider(height: 1, indent: 56),
               _buildTile(
-                icon: Icons.code_outlined,
-                iconColor: AppColors.subtleText,
-                title: '오픈소스 라이선스',
-                trailing: const Icon(Icons.chevron_right, color: AppColors.subtleText, size: 20),
-                onTap: () => showLicensePage(
-                  context: context,
-                  applicationName: '체크 알리미',
-                  applicationVersion: '1.0.0',
-                ),
+                icon: Icons.logout_outlined,
+                iconColor: AppColors.error,
+                title: '로그아웃',
+                titleColor: AppColors.error,
+                onTap: () => _showLogoutDialog(context),
               ),
             ],
           ),

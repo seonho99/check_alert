@@ -289,11 +289,22 @@ class TaskListView extends StatelessWidget {
           final category = categories[index];
           final isSelected = viewModel.state.selectedCategory == category;
           return FilterChip(
-            label: Text(category),
+            label: Text(
+              category,
+              style: TextStyle(
+                color: isSelected ? Colors.white : AppColors.onSurface,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+              ),
+            ),
             selected: isSelected,
             onSelected: (_) => viewModel.selectCategory(category),
-            selectedColor: AppColors.primaryLight,
-            checkmarkColor: AppColors.primaryDark,
+            selectedColor: AppColors.primary,
+            backgroundColor: Colors.white,
+            side: BorderSide(
+              color: isSelected ? AppColors.primary : AppColors.divider,
+            ),
+            showCheckmark: false,
+            padding: const EdgeInsets.symmetric(horizontal: 4),
           );
         },
       ),
@@ -442,6 +453,7 @@ class TaskListView extends StatelessWidget {
 
   Color _categoryColor(String category) {
     return switch (category) {
+      '전체' => AppColors.primary,
       '건강' => const Color(0xFFEF4444),
       '납부' => const Color(0xFFF59E0B),
       '운동' => const Color(0xFF3B82F6),
