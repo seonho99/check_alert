@@ -13,6 +13,8 @@ import '../../domain/usecase/task/add_task_usecase.dart';
 import '../../domain/usecase/task/update_task_usecase.dart';
 import '../../domain/usecase/task/delete_task_usecase.dart';
 
+import '../../ui/splash/splash_view.dart';
+import '../../ui/splash/splash_viewmodel.dart';
 import '../../ui/auth/sign_in/sign_in_view.dart';
 import '../../ui/auth/sign_in/sign_in_viewmodel.dart';
 import '../../ui/auth/sign_up/sign_up_view.dart';
@@ -28,6 +30,7 @@ import '../../ui/settings/settings_view.dart';
 class AppRoutes {
   AppRoutes._();
 
+  static const String splash = '/splash';
   static const String home = '/';
   static const String signIn = '/sign-in';
   static const String signUp = '/sign-up';
@@ -40,9 +43,19 @@ class AppRoutes {
 
 /// GoRouter 설정
 final GoRouter router = GoRouter(
-  initialLocation: AppRoutes.signIn,
+  initialLocation: AppRoutes.splash,
   debugLogDiagnostics: false,
   routes: [
+    GoRoute(
+      path: AppRoutes.splash,
+      builder: (context, state) => ChangeNotifierProvider(
+        create: (ctx) => SplashViewModel(
+          appOpenAdService: ctx.read(),
+          authRepository: ctx.read<AuthRepository>(),
+        ),
+        child: const SplashView(),
+      ),
+    ),
     GoRoute(
       path: AppRoutes.home,
       builder: (context, state) => ChangeNotifierProvider(

@@ -1,6 +1,9 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 
@@ -25,10 +28,21 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // 2. 날짜 포맷 초기화 (한국어)
+  // 2. ATT 권한 요청 (iOS 14+)
+  if (Platform.isIOS) {
+    final status = await AppTrackingTransparency.trackingAuthorizationStatus;
+    if (status == TrackingStatus.notDetermined) {
+      await AppTrackingTransparency.requestTrackingAuthorization();
+    }
+  }
+
+  // 3. Google Mobile Ads 초기화
+  await MobileAds.instance.initialize();
+
+  // 4. 날짜 포맷 초기화 (한국어)
   await initializeDateFormatting('ko_KR', null);
 
-  // 3. 로컬 알림 초기화
+  // 5. 로컬 알림 초기화
   final localNotificationService = LocalNotificationService();
   await localNotificationService.initialize();
   await localNotificationService.requestPermission();

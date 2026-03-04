@@ -6,6 +6,7 @@ import '../../core/route/router.dart';
 import '../../core/services/local_notification_service.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
+import '../../core/widgets/banner_ad_widget.dart';
 import '../../domain/repository/auth_repository.dart';
 import '../../domain/usecase/auth/sign_out_usecase.dart';
 
@@ -21,6 +22,7 @@ class SettingsView extends StatelessWidget {
       appBar: AppBar(
         title: const Text('설정'),
       ),
+      bottomNavigationBar: const BannerAdWidget(),
       body: SafeArea(
         child: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),

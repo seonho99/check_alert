@@ -1,7 +1,7 @@
 name: check_alert
 description: "체크 알리미 - 매일 체크하는 습관 관리 앱"
 publish_to: 'none'
-version: 1.0.0+1
+version: 2.0.0+11
 
 environment:
   sdk: ^3.7.2
@@ -38,6 +38,10 @@ dependencies:
 
   # Google Sign-In
   google_sign_in: ^7.2.0
+
+  # Ads
+  google_mobile_ads: ^5.2.0
+  app_tracking_transparency: ^2.0.6
 
   # Calendar
   calendar_date_picker2: ^2.0.1

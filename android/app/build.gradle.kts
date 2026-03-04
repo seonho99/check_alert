@@ -36,8 +36,8 @@ android {
         applicationId = "seonho.com.share_status.share_status"
         minSdk = 23
         targetSdk = flutter.targetSdkVersion
-        versionCode = 8
-        versionName = "2.0.0"
+        versionCode = flutter.versionCode
+        versionName = flutter.versionName
     }
 
     signingConfigs {
@@ -52,6 +52,11 @@ android {
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("release")
+            isMinifyEnabled = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 }

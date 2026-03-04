@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
 import '../services/local_notification_service.dart';
+import '../services/app_open_ad_service.dart';
+import '../services/banner_ad_service.dart';
 
 /// Core Provider (Firebase 인스턴스, 서비스)
 List<SingleChildWidget> buildCoreProviders({
@@ -18,6 +20,13 @@ List<SingleChildWidget> buildCoreProviders({
     ),
     Provider<LocalNotificationService>.value(
       value: localNotificationService,
+    ),
+    Provider<AppOpenAdService>(
+      create: (_) => AppOpenAdService(),
+      dispose: (_, service) => service.dispose(),
+    ),
+    Provider<BannerAdService>(
+      create: (_) => BannerAdService(),
     ),
   ];
 }

@@ -108,10 +108,10 @@ class LegalView extends StatelessWidget {
             child: Text(
               '회원 탈퇴',
               style: TextStyle(
-                fontSize: 11,
-                color: Colors.grey.shade500,
+                fontSize: 13,
+                color: Colors.grey.shade700,
                 decoration: TextDecoration.underline,
-                decorationColor: Colors.grey.shade500,
+                decorationColor: Colors.grey.shade700,
               ),
             ),
           ),

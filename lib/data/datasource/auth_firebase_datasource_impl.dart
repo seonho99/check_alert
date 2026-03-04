@@ -125,7 +125,7 @@ class AuthFirebaseDataSourceImpl implements AuthDataSource {
   Future<void> _initializeGoogleSignIn() async {
     try {
       await _googleSignIn.initialize(
-        clientId: '92105577038-e2qh282rkc87ll94et30349jf7agi9je.apps.googleusercontent.com',
+        clientId: '92105577038-7dcdjpnipjjn9oi1pjnssru1l3i5dne9.apps.googleusercontent.com',
         serverClientId: '92105577038-slpl4jp7t6chqjg9gq9e4gd6fqg9l7re.apps.googleusercontent.com',
       );
       _isGoogleSignInInitialized = true;

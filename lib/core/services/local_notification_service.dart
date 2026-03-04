@@ -208,18 +208,20 @@ class LocalNotificationService {
 
   /// Task의 모든 알림 취소
   Future<void> cancelTaskReminder(String taskId) async {
+    final futures = <Future<void>>[];
     // weekly 타입 알림 (day=1~7)
     for (int day = 1; day <= 7; day++) {
-      await _plugin.cancel(_generateNotificationId(taskId, day));
+      futures.add(_plugin.cancel(_generateNotificationId(taskId, day)));
     }
     // monthly 타입 알림 (50+day=51~81)
     for (int day = 1; day <= 31; day++) {
-      await _plugin.cancel(_generateNotificationId(taskId, 50 + day));
+      futures.add(_plugin.cancel(_generateNotificationId(taskId, 50 + day)));
     }
     // once 타입 알림 (인덱스 100~465, 최대 365일)
     for (int i = 100; i < 466; i++) {
-      await _plugin.cancel(_generateNotificationId(taskId, i));
+      futures.add(_plugin.cancel(_generateNotificationId(taskId, i)));
     }
+    await Future.wait(futures);
   }
 
   /// 모든 알림 취소
